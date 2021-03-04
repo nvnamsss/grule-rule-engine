@@ -16,11 +16,12 @@ package ast
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"github.com/sirupsen/logrus"
-	"strings"
-	"time"
 )
 
 // NewWorkingMemory create new instance of WorkingMemory

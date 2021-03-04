@@ -1,0 +1,8 @@
+rule  DuplicateRule1  "Duplicate Rule-1"  salience 10 {
+when
+(Fact.Distance > 5000  ||   Fact.Duration > 120) || (Fact.RideType == "On-Demand" && Fact.IsFrequentCustomer == true)
+Then
+   Fact.NetAmount=143.320007;
+   Fact.Result=true;
+   Complete();
+}

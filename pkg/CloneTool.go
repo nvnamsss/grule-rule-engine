@@ -24,7 +24,7 @@ type CloneRecord struct {
 
 // NewCloneTable create new instance of CloneTable
 func NewCloneTable() *CloneTable {
-	return &CloneTable{Records: make(map[string]*CloneRecord)}
+	return &CloneTable{Records: make(map[string]*CloneRecord, 100)}
 }
 
 // CloneTable will stores all meta information about AST object being cloned under one KnowledgeBase.

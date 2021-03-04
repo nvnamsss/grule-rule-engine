@@ -16,11 +16,13 @@ package benchmark
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strconv"
+	"testing"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"io/ioutil"
-	"testing"
 )
 
 /**
@@ -34,6 +36,28 @@ type RideFact struct {
 	IsFrequentCustomer bool
 	Result             bool
 	NetAmount          float32
+}
+
+func Benchmark_Load_DifferentRules(b *testing.B) {
+	input, _ := ioutil.ReadFile("100_rules.grl")
+	rules := string(input)
+	fact := &RideFact{
+		Distance: 6000,
+		Duration: 121,
+	}
+	dctx := ast.NewDataContext()
+	_ = dctx.Add("Fact", fact)
+
+	lib := ast.NewKnowledgeLibrary()
+	rb := builder.NewRuleBuilder(lib)
+	version := 0
+	for k := 0; k < b.N; k++ {
+		_ = rb.BuildRuleFromResource("load_rules_test", strconv.Itoa(version), pkg.NewBytesResource([]byte(rules)))
+		version++
+		// for i := 0; i < 100; i++ {
+
+		// }
+	}
 }
 
 func Benchmark_Grule_Load_Rules(b *testing.B) {

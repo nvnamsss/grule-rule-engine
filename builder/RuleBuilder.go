@@ -16,10 +16,11 @@ package builder
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"github.com/sirupsen/logrus"
-	"time"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	antlr2 "github.com/hyperjumptech/grule-rule-engine/antlr"
@@ -98,7 +99,6 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	if err != nil {
 		return err
 	}
-
 	// Immediately parse the loaded resource
 	is := antlr.NewInputStream(string(data))
 	lexer := parser.Newgrulev3Lexer(is)
@@ -120,13 +120,13 @@ func (builder *RuleBuilder) BuildRuleFromResource(name, version string, resource
 	psr.BuildParseTrees = true
 	antlr.ParseTreeWalkerDefault.Walk(listener, psr.Grl())
 
-	grl := listener.Grl
-	for _, ruleEntry := range grl.RuleEntries {
-		err := kb.AddRuleEntry(ruleEntry)
-		if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
-			BuilderLog.Tracef("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName, err.Error())
-		}
-	}
+	// grl := listener.Grl
+	// for _, ruleEntry := range grl.RuleEntries {
+	// 	err := kb.AddRuleEntry(ruleEntry)
+	// 	if err != nil && err.Error() != "rule entry TestNoDesc already exist" {
+	// 		BuilderLog.Tracef("warning while adding rule entry : %s. got %s, possibly already added by antlr listener", ruleEntry.RuleName, err.Error())
+	// 	}
+	// }
 
 	kb.WorkingMemory.IndexVariables()
 

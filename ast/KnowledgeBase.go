@@ -27,13 +27,15 @@ import (
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
 func NewKnowledgeLibrary() *KnowledgeLibrary {
 	return &KnowledgeLibrary{
-		Library: make(map[string]*KnowledgeBase),
+		Library:    make(map[string]*KnowledgeBase),
+		cloneTable: make(map[string]*pkg.CloneTable),
 	}
 }
 
 // KnowledgeLibrary is a knowledgebase store.
 type KnowledgeLibrary struct {
-	Library map[string]*KnowledgeBase
+	Library    map[string]*KnowledgeBase
+	cloneTable map[string]*pkg.CloneTable
 }
 
 // GetKnowledgeBase will get the actual KnowledgeBase blue print that will be used to create instances.
@@ -57,16 +59,22 @@ func (lib *KnowledgeLibrary) GetKnowledgeBase(name, version string) *KnowledgeBa
 // NewKnowledgeBaseInstance will create a new instance based on KnowledgeBase blue print
 // identified by its name and version
 func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *KnowledgeBase {
-	kb, ok := lib.Library[fmt.Sprintf("%s:%s", name, version)]
+	key := fmt.Sprintf("%s:%s", name, version)
+	kb, ok := lib.Library[key]
+
 	if ok {
-		newClone := kb.Clone(pkg.NewCloneTable())
-		if kb.IsIdentical(newClone) {
-			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
-			return newClone
+		if lib.cloneTable[key] == nil {
+			lib.cloneTable[key] = pkg.NewCloneTable()
 		}
-		AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
-		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
-		panic("The clone is not identical")
+		newClone := kb.Clone(lib.cloneTable[key])
+		return newClone
+		// if kb.IsIdentical(newClone) {
+		// 	AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
+		// 	return newClone
+		// }
+		// AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		// AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
+		// panic("The clone is not identical")
 	}
 	return nil
 }
@@ -112,7 +120,7 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 	clone := &KnowledgeBase{
 		Name:        e.Name,
 		Version:     e.Version,
-		RuleEntries: make(map[string]*RuleEntry),
+		RuleEntries: make(map[string]*RuleEntry, len(e.RuleEntries)),
 	}
 	if e.RuleEntries != nil {
 		for k, entry := range e.RuleEntries {
@@ -125,9 +133,11 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 			}
 		}
 	}
+
 	if e.WorkingMemory != nil {
 		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
 	}
+
 	return clone
 }
 
