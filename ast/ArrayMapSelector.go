@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright nvnamsss/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/ast/unique"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
 	"reflect"
+
+	"github.com/nvnamsss/grule-rule-engine/ast/unique"
+	"github.com/nvnamsss/grule-rule-engine/pkg"
 )
 
 // NewArrayMapSelector create a new array selector graph

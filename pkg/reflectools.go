@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright nvnamsss/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/hyperjumptech/grule-rule-engine/logger"
 	"math"
 	"reflect"
+
+	"github.com/nvnamsss/grule-rule-engine/logger"
 )
 
 // GetFunctionList get list of functions in a struct instance

@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright nvnamsss/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/nvnamsss/grule-rule-engine/ast"
+	"github.com/nvnamsss/grule-rule-engine/builder"
+	"github.com/nvnamsss/grule-rule-engine/pkg"
 )
 
 /**

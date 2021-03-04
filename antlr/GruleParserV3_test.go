@@ -1,4 +1,4 @@
-//  Copyright hyperjumptech/grule-rule-engine Authors
+//  Copyright nvnamsss/grule-rule-engine Authors
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@ package antlr
 
 import (
 	"fmt"
-	"github.com/antlr/antlr4/runtime/Go/antlr"
-	parser "github.com/hyperjumptech/grule-rule-engine/antlr/parser/grulev3"
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"reflect"
 	"testing"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	parser "github.com/nvnamsss/grule-rule-engine/antlr/parser/grulev3"
+	"github.com/nvnamsss/grule-rule-engine/ast"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

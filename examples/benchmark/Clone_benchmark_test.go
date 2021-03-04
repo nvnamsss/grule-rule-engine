@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/hyperjumptech/grule-rule-engine/ast"
-	"github.com/hyperjumptech/grule-rule-engine/builder"
-	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/nvnamsss/grule-rule-engine/ast"
+	"github.com/nvnamsss/grule-rule-engine/builder"
+	"github.com/nvnamsss/grule-rule-engine/pkg"
 )
 
 func Benchmark_Grule_KnowledgeBase_Clone(b *testing.B) {
