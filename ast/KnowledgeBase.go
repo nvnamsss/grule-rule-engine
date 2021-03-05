@@ -27,15 +27,15 @@ import (
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
 func NewKnowledgeLibrary() *KnowledgeLibrary {
 	return &KnowledgeLibrary{
-		Library:    make(map[string]*KnowledgeBase),
-		cloneTable: make(map[string]*pkg.CloneTable),
+		Library:     make(map[string]*KnowledgeBase),
+		cloneTables: sync.Map{},
 	}
 }
 
 // KnowledgeLibrary is a knowledgebase store.
 type KnowledgeLibrary struct {
-	Library    map[string]*KnowledgeBase
-	cloneTable map[string]*pkg.CloneTable
+	Library     map[string]*KnowledgeBase
+	cloneTables sync.Map
 }
 
 // GetKnowledgeBase will get the actual KnowledgeBase blue print that will be used to create instances.
@@ -63,18 +63,17 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 	kb, ok := lib.Library[key]
 
 	if ok {
-		if lib.cloneTable[key] == nil {
-			lib.cloneTable[key] = pkg.NewCloneTable()
+		ct, _ := lib.cloneTables.LoadOrStore(key, pkg.NewCloneTable())
+		newClone := kb.Clone(ct.(*pkg.CloneTable))
+		if kb.IsIdentical(newClone) {
+			AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
+			return newClone
 		}
-		newClone := kb.Clone(lib.cloneTable[key])
+		AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
+		AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
+		panic("The clone is not identical")
 		return newClone
-		// if kb.IsIdentical(newClone) {
-		// 	AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
-		// 	return newClone
-		// }
-		// AstLog.Fatalf("ORIGIN   : %s", kb.GetSnapshot())
-		// AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
-		// panic("The clone is not identical")
+
 	}
 	return nil
 }
