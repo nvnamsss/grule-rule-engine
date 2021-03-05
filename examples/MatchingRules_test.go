@@ -15,6 +15,7 @@
 package examples
 
 import (
+	"log"
 	"testing"
 
 	"github.com/nvnamsss/grule-rule-engine/ast"
@@ -29,6 +30,14 @@ type Fact struct {
 	Distance  int32
 	Duration  int32
 	Result    bool
+	A         int64
+	B         int64
+	Howls     []string
+}
+
+func (f *Fact) Howl(s string) {
+	log.Printf(s)
+	f.Howls = append(f.Howls, s)
 }
 
 const duplicateRulesWithDiffSalience = `
@@ -86,7 +95,7 @@ func TestGruleEngine_FetchMatchingRules_Having_Diff_Salience(t *testing.T) {
 	assert.NoError(t, err)
 	lib := ast.NewKnowledgeLibrary()
 	rb := builder.NewRuleBuilder(lib)
-	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(duplicateRulesWithDiffSalience)))
+	err = rb.BuildRuleFromResource("conflict_rules_test", "0.1.1", pkg.NewBytesResource([]byte(ruleString)))
 	assert.NoError(t, err)
 	kb := lib.NewKnowledgeBaseInstance("conflict_rules_test", "0.1.1")
 

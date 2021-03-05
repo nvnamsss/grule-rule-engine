@@ -79,9 +79,7 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 	if ok {
 		i, ok := lib.cloneTables.LoadOrStore(key, newCloneTableHolder())
 		holder := i.(*cloneTableHolder)
-		// if lib.cloneTable[key] == nil {
-		// 	lib.cloneTable[key] = pkg.NewCloneTable()
-		// }
+
 		if ok {
 			for !holder.status {
 				// spin
@@ -100,6 +98,26 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 		// AstLog.Fatalf("CLONE    : %s", newClone.GetSnapshot())
 		// panic("The clone is not identical")
 	}
+	return nil
+}
+
+func (lib *KnowledgeLibrary) NewPartialKnowledgeBase(name, version string, rules []string) *KnowledgeBase {
+	key := fmt.Sprintf("%s:%s", name, version)
+	kb, ok := lib.Library[key]
+	if ok {
+		i, ok := lib.cloneTables.Load(key)
+		var cloneTable *pkg.CloneTable
+		if ok {
+			cloneTable = i.(*cloneTableHolder).cloneTable
+		} else {
+			cloneTable = pkg.NewCloneTable()
+		}
+
+		newClone := kb.ParitialClone(cloneTable, rules)
+
+		return newClone
+	}
+
 	return nil
 }
 
@@ -153,6 +171,37 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 			} else {
 				cloned := entry.Clone(cloneTable)
 				clone.RuleEntries[k] = cloned
+				cloneTable.MarkCloned(entry.AstID, cloned.AstID, entry, cloned)
+			}
+		}
+	}
+
+	if e.WorkingMemory != nil {
+		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
+	}
+
+	return clone
+}
+
+func (e *KnowledgeBase) ParitialClone(cloneTable *pkg.CloneTable, rules []string) *KnowledgeBase {
+	clone := &KnowledgeBase{
+		Name:        e.Name,
+		Version:     e.Version,
+		RuleEntries: make(map[string]*RuleEntry, len(rules)),
+	}
+
+	if e.RuleEntries != nil {
+		for _, rule := range rules {
+			entry, ok := e.RuleEntries[rule]
+			if !ok {
+				continue
+			}
+
+			if cloneTable.IsCloned(entry.AstID) {
+				clone.RuleEntries[rule] = cloneTable.Records[entry.AstID].CloneInstance.(*RuleEntry)
+			} else {
+				cloned := entry.Clone(cloneTable)
+				clone.RuleEntries[rule] = cloned
 				cloneTable.MarkCloned(entry.AstID, cloned.AstID, entry, cloned)
 			}
 		}
