@@ -15,6 +15,7 @@
 package ast
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -111,6 +112,88 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		for k, expr := range e.expressionSnapshotMap {
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
+			} else {
+				panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
+			}
+		}
+	}
+
+	if e.expressionAtomSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d expressionAtomSnapshotMap entries", len(e.expressionAtomSnapshotMap))
+		for k, exprAtm := range e.expressionAtomSnapshotMap {
+			if cloneTable.IsCloned(exprAtm.AstID) {
+				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
+			} else {
+				panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
+			}
+		}
+	}
+
+	if e.variableSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d variableSnapshotMap entries", len(e.variableSnapshotMap))
+		for k, vari := range e.variableSnapshotMap {
+			if cloneTable.IsCloned(vari.AstID) {
+				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
+			} else {
+				panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
+			}
+		}
+	}
+
+	if e.expressionVariableMap != nil {
+		AstLog.Debugf("Cloning %d expressionVariableMap entries", len(e.expressionVariableMap))
+		for k, exprArr := range e.expressionVariableMap {
+			if cloneTable.IsCloned(k.AstID) {
+				clonedVari := cloneTable.Records[k.AstID].CloneInstance.(*Variable)
+				clone.expressionVariableMap[clonedVari] = make([]*Expression, len(exprArr))
+				for k2, expr := range exprArr {
+					if cloneTable.IsCloned(expr.AstID) {
+						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
+					} else {
+						panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
+					}
+				}
+			} else {
+				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
+			}
+		}
+	}
+
+	if e.expressionAtomVariableMap != nil {
+		AstLog.Debugf("Cloning %d expressionAtomVariableMap entries", len(e.expressionAtomVariableMap))
+		for k, exprAtmArr := range e.expressionAtomVariableMap {
+			if cloneTable.IsCloned(k.AstID) {
+				clonedVari := cloneTable.Records[k.AstID].CloneInstance.(*Variable)
+				clone.expressionAtomVariableMap[clonedVari] = make([]*ExpressionAtom, len(exprAtmArr))
+				for k2, expr := range exprAtmArr {
+					if cloneTable.IsCloned(expr.AstID) {
+						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
+					} else {
+						panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
+					}
+				}
+			} else {
+				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
+			}
+		}
+	}
+
+	if e.Equals(clone) {
+		clone.DebugContent()
+		return clone
+	}
+	panic("Clone not equals the origin.")
+}
+
+func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory {
+	AstLog.Debugf("Cloning working memory %s:%s", e.Name, e.Version)
+	clone := NewWorkingMemory(e.Name, e.Version)
+
+	if e.expressionSnapshotMap != nil {
+		AstLog.Debugf("Cloning %d expressionSnapshotMap entries", len(e.expressionSnapshotMap))
+		for k, expr := range e.expressionSnapshotMap {
+			if cloneTable.IsCloned(expr.AstID) {
+				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			}
 			// else {
 			// 	panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
@@ -184,11 +267,12 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		}
 	}
 
-	if e.Equals(clone) {
-		clone.DebugContent()
-		return clone
-	}
-	panic("Clone not equals the origin.")
+	return clone
+	// if e.Equals(clone) {
+	// 	clone.DebugContent()
+	// 	return clone
+	// }
+	// panic("Clone not equals the origin.")
 }
 
 // IndexVariables will index all expression and expression atoms that contains a speciffic variable name

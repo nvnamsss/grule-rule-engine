@@ -208,7 +208,7 @@ func (e *KnowledgeBase) ParitialClone(cloneTable *pkg.CloneTable, rules []string
 	}
 
 	if e.WorkingMemory != nil {
-		clone.WorkingMemory = e.WorkingMemory.Clone(cloneTable)
+		clone.WorkingMemory = e.WorkingMemory.ParitialClone(cloneTable)
 	}
 
 	return clone
