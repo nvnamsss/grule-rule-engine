@@ -112,9 +112,10 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		for k, expr := range e.expressionSnapshotMap {
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
-			} else {
-				panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
 			}
+			// else {
+			// 	panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
+			// }
 		}
 	}
 
@@ -123,9 +124,10 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		for k, exprAtm := range e.expressionAtomSnapshotMap {
 			if cloneTable.IsCloned(exprAtm.AstID) {
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
-			} else {
-				panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
 			}
+			// else {
+			// 	panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
+			// }
 		}
 	}
 
@@ -134,9 +136,10 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 		for k, vari := range e.variableSnapshotMap {
 			if cloneTable.IsCloned(vari.AstID) {
 				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
-			} else {
-				panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
 			}
+			// else {
+			// 	panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
+			// }
 		}
 	}
 
