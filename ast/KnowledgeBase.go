@@ -27,17 +27,29 @@ import (
 // NewKnowledgeLibrary create a new instance KnowledgeLibrary
 func NewKnowledgeLibrary() *KnowledgeLibrary {
 	return &KnowledgeLibrary{
-		Library:    make(map[string]*KnowledgeBase),
-		cloneTable: make(map[string]*pkg.CloneTable),
+		Library:     make(map[string]*KnowledgeBase),
+		cloneTable:  make(map[string]*cloneTableHolder),
+		cloneTables: sync.Map{},
 	}
 }
 
 // KnowledgeLibrary is a knowledgebase store.
 type KnowledgeLibrary struct {
-	Library map[string]*KnowledgeBase
-	// cloneTables sync.Map
-	cloneTable map[string]*pkg.CloneTable
-	m          sync.Mutex
+	Library     map[string]*KnowledgeBase
+	cloneTables sync.Map
+	cloneTable  map[string]*cloneTableHolder
+}
+
+type cloneTableHolder struct {
+	status     bool
+	cloneTable *pkg.CloneTable
+}
+
+func newCloneTableHolder() *cloneTableHolder {
+	return &cloneTableHolder{
+		status:     false,
+		cloneTable: pkg.NewCloneTable(),
+	}
 }
 
 // GetKnowledgeBase will get the actual KnowledgeBase blue print that will be used to create instances.
@@ -65,13 +77,20 @@ func (lib *KnowledgeLibrary) NewKnowledgeBaseInstance(name, version string) *Kno
 	kb, ok := lib.Library[key]
 
 	if ok {
-		lib.m.Lock()
-		defer lib.m.Unlock()
-		if lib.cloneTable[key] == nil {
-			lib.cloneTable[key] = pkg.NewCloneTable()
+		i, ok := lib.cloneTables.LoadOrStore(key, newCloneTableHolder())
+		holder := i.(*cloneTableHolder)
+		// if lib.cloneTable[key] == nil {
+		// 	lib.cloneTable[key] = pkg.NewCloneTable()
+		// }
+		if ok {
+			for !holder.status {
+				// spin
+			}
 		}
 
-		newClone := kb.Clone(lib.cloneTable[key])
+		newClone := kb.Clone(holder.cloneTable)
+		holder.status = true
+
 		return newClone
 		// if kb.IsIdentical(newClone) {
 		// 	AstLog.Debugf("Successfully create instance [%s:%s]", newClone.Name, newClone.Version)
