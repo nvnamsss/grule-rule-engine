@@ -15,7 +15,6 @@
 package ast
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -152,13 +151,15 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 				for k2, expr := range exprArr {
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
-					} else {
-						panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
 					}
+					// else {
+					// 	panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
+					// }
 				}
-			} else {
-				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
+			// else {
+			// 	panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
+			// }
 		}
 	}
 
@@ -171,13 +172,15 @@ func (e *WorkingMemory) Clone(cloneTable *pkg.CloneTable) *WorkingMemory {
 				for k2, expr := range exprAtmArr {
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
-					} else {
-						panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
 					}
+					// else {
+					// 	panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
+					// }
 				}
-			} else {
-				panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
 			}
+			// else {
+			// 	panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
+			// }
 		}
 	}
 
