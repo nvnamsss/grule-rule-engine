@@ -10,7 +10,7 @@ import (
 )
 
 func Benchmark_Grule_KnowledgeBase_Clone(b *testing.B) {
-	input, _ := ioutil.ReadFile("1000_rules.grl")
+	input, _ := ioutil.ReadFile("1_rule.grl")
 	rules := string(input)
 	fact := &RideFact{
 		Distance: 6000,
@@ -24,7 +24,8 @@ func Benchmark_Grule_KnowledgeBase_Clone(b *testing.B) {
 	_ = rb.BuildRuleFromResource("load_rules_test", "0.1.1", pkg.NewBytesResource([]byte(rules)))
 	_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
 	for k := 0; k < b.N; k++ {
-		_ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
+		go lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
+		// _ = lib.NewKnowledgeBaseInstance("load_rules_test", "0.1.1")
 	}
 
 }
