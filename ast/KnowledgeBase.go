@@ -173,6 +173,7 @@ func (e *KnowledgeBase) Clone(cloneTable *pkg.CloneTable) *KnowledgeBase {
 				clone.RuleEntries[k] = cloned
 				cloneTable.MarkCloned(entry.AstID, cloned.AstID, entry, cloned)
 			}
+			clone.RuleEntries[k].Retracted = false
 		}
 	}
 
@@ -204,6 +205,7 @@ func (e *KnowledgeBase) ParitialClone(cloneTable *pkg.CloneTable, rules []string
 				clone.RuleEntries[rule] = cloned
 				cloneTable.MarkCloned(entry.AstID, cloned.AstID, entry, cloned)
 			}
+			clone.RuleEntries[rule].Retracted = false
 		}
 	}
 

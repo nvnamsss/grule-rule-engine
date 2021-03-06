@@ -195,9 +195,6 @@ func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory
 			if cloneTable.IsCloned(expr.AstID) {
 				clone.expressionSnapshotMap[k] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 			}
-			// else {
-			// 	panic(fmt.Sprintf("expression  %s is not on the clone table", expr.GrlText))
-			// }
 		}
 	}
 
@@ -207,9 +204,6 @@ func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory
 			if cloneTable.IsCloned(exprAtm.AstID) {
 				clone.expressionAtomSnapshotMap[k] = cloneTable.Records[exprAtm.AstID].CloneInstance.(*ExpressionAtom)
 			}
-			// else {
-			// 	panic(fmt.Sprintf("expression atom %s is not on the clone table. ASTID %s", exprAtm.GrlText, exprAtm.AstID))
-			// }
 		}
 	}
 
@@ -219,9 +213,6 @@ func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory
 			if cloneTable.IsCloned(vari.AstID) {
 				clone.variableSnapshotMap[k] = cloneTable.Records[vari.AstID].CloneInstance.(*Variable)
 			}
-			// else {
-			// 	panic(fmt.Sprintf("variable %s is not on the clone table", vari.GrlText))
-			// }
 		}
 	}
 
@@ -235,14 +226,8 @@ func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*Expression)
 					}
-					// else {
-					// 	panic(fmt.Sprintf("expression %s is not on the clone table", expr.GrlText))
-					// }
 				}
 			}
-			// else {
-			// 	panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
-			// }
 		}
 	}
 
@@ -256,14 +241,8 @@ func (e *WorkingMemory) ParitialClone(cloneTable *pkg.CloneTable) *WorkingMemory
 					if cloneTable.IsCloned(expr.AstID) {
 						clone.expressionAtomVariableMap[clonedVari][k2] = cloneTable.Records[expr.AstID].CloneInstance.(*ExpressionAtom)
 					}
-					// else {
-					// 	panic(fmt.Sprintf("expression atom %s is not on the clone table", expr.GrlText))
-					// }
 				}
 			}
-			// else {
-			// 	panic(fmt.Sprintf("variable %s is not on the clone table", k.GrlText))
-			// }
 		}
 	}
 
