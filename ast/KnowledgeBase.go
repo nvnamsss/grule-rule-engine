@@ -108,8 +108,13 @@ func (lib *KnowledgeLibrary) NewPartialKnowledgeBase(name, version string, rules
 		i, ok := lib.cloneTables.Load(key)
 		var cloneTable *pkg.CloneTable
 		if ok {
-			cloneTable = i.(*cloneTableHolder).cloneTable
-		} else {
+			holder := i.(*cloneTableHolder)
+			if holder.status {
+				cloneTable = i.(*cloneTableHolder).cloneTable
+			}
+		}
+
+		if cloneTable == nil {
 			cloneTable = pkg.NewCloneTable()
 		}
 
